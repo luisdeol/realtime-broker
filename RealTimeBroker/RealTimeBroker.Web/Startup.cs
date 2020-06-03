@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using RealTimeBroker.Web.HostedServices;
+using RealTimeBroker.Web.Hubs;
 
 namespace RealTimeBroker.Web
 {
@@ -15,6 +12,21 @@ namespace RealTimeBroker.Web
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services
+                .AddSignalR();
+
+            services
+                .AddHostedService<UpdateStockPriceHostedService>();
+
+            services.AddCors(options =>
+                {
+                    options.AddPolicy("CorsPolicyForDashboard", builder => 
+                        builder
+                            .WithOrigins("http://localhost:4200")
+                            .AllowAnyMethod()
+                            .AllowAnyHeader()
+                            .AllowCredentials());
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -25,9 +37,11 @@ namespace RealTimeBroker.Web
                 app.UseDeveloperExceptionPage();
             }
 
-            app.Run(async (context) =>
+            app.UseCors("CorsPolicyForDashboard");
+
+            app.UseSignalR(route =>
             {
-                await context.Response.WriteAsync("Hello World!");
+                route.MapHub<BrokerHub>("/brokerhub");
             });
         }
     }
