@@ -7,8 +7,11 @@ import { HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
   styleUrls: ['./app.component.sass']
 })
 export class AppComponent {
-  title = 'front-dashboard-stocks';
-  itsa4Value: number;
+  dictStocks = {
+    "ITSA4": 0,
+    "TAEE11": 0,
+    "PETR4": 0
+  };
 
   private _hubConnection: HubConnection;
   
@@ -34,18 +37,18 @@ export class AppComponent {
       .then(() => {   
         console.log('Hub connection started');  
         
-        this.connectToStock("ITSA4");
+        for (let key in this.dictStocks) {
+          this.connectToStock(key);
+        }
       })  
-      .catch(err => {  
-        console.log('Error while establishing connection, retrying...');  
+      .catch(() => {  
         setTimeout(function () { this.startConnection(); }, 5000);  
       });  
   }  
   
   private registerOnServerEvents(): void {  
-    this._hubConnection.on('UpdatePrice', (data: any) => {  
-      console.log(data);
-      this.itsa4Value = data;
+    this._hubConnection.on('UpdatePrice', (data: any) => {
+      this.dictStocks[data.symbol] = data.price;
     });  
   }  
 }
