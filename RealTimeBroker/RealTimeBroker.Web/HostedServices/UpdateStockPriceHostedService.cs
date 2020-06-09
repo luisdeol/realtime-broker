@@ -33,7 +33,7 @@ namespace RealTimeBroker.Web.HostedServices
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(UpdatePrices, null, 0, 5000);
+            _timer = new Timer(UpdatePrices, null, 0, 2000);
 
             return Task.CompletedTask;
         }

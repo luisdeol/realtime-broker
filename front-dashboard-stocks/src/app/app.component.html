@@ -11,7 +11,7 @@
   :host {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     font-size: 14px;
-    color: #333;
+    color: #111F9F;
     box-sizing: border-box;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -28,6 +28,18 @@
 
   p {
     margin: 0;
+  }
+
+  .positive {
+    background-color: #37BB69;
+    border: 3px solid #37BB69 !important;
+    color: white !important;
+  }
+
+  .negative {
+    background-color: #FB1234;
+    color: white !important;
+    border: 3px solid #FB1234 !important;
   }
 
   .spacer {
@@ -88,8 +100,7 @@
 
   .card {
     border-radius: 4px;
-    border: 1px solid #eee;
-    background-color: #fafafa;
+    border: 3px solid #111F9F;
     height: 40px;
     width: 200px;
     margin: 0 8px 16px;
@@ -100,6 +111,8 @@
     align-items: center;
     transition: all 0.2s ease-in-out;
     line-height: 24px;
+    color:  #111F9F;
+    font-size: 16px !important;
   }
 
   .card-container .card:not(:last-child) {
@@ -109,15 +122,6 @@
   .card.card-small {
     height: 16px;
     width: 168px;
-  }
-
-  .card-container .card:not(.highlight-card) {
-    cursor: pointer;
-  }
-
-  .card-container .card:not(.highlight-card):hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 17px rgba(black, 0.35);
   }
 
   .card-container .card:not(.highlight-card):hover .material-icons path {
@@ -156,8 +160,8 @@
   a,
   a:visited,
   a:hover {
-    color: #1976d2;
-    text-decoration: none;
+    text-decoration: none !important;
+    cursor: auto;
   }
 
   a:hover {
@@ -321,7 +325,7 @@
       </g>
     </svg>
 
-    <span>Exemplo SignalR + ASP.NET Core</span>
+    <span>Exemplo SignalR + ASP.NET Core - luis_dev</span>
 
     <svg id="rocket-smoke" alt="Rocket Ship Smoke" xmlns="http://www.w3.org/2000/svg" width="516.119" height="1083.632" viewBox="0 0 516.119 1083.632">
       <path id="Path_40" data-name="Path 40" d="M644.6,141S143.02,215.537,147.049,870.207s342.774,201.755,342.774,201.755S404.659,847.213,388.815,762.2c-27.116-145.51-11.551-384.124,271.9-609.1C671.15,139.365,644.6,141,644.6,141Z" transform="translate(-147.025 -140.939)" fill="#f5f5f5"/>
@@ -334,8 +338,12 @@
   <p>Painel de ações sendo acompanhadas.</p>
 
   <div class="card-container">
-    <a class="card" target="_blank" rel="noopener" href="#" *ngFor="let item of dictStocks | keyvalue">
-      <span><b>{{ item.key }}:</b> {{ item.value | currency: 'BRL' : 'symbol': '1.2-2' }}</span>
+    <a class="card" [ngClass]="{
+            'positive' : item.value.change > 0,
+            'negative' : item.value.change < 0
+         }" target="_blank" rel="noopener" href="#" *ngFor="let item of dictStocks | keyvalue">
+      <span><b>{{ item.key }}:</b> {{ item.value.currentValue | currency: 'BRL' : 'symbol': '1.2-2' }} | {{ item.value.change | percent: '1.2-2' }}
+      </span>    
     </a>
   </div>
 </div>

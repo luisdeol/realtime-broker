@@ -1,4 +1,4 @@
-import { Component, EventEmitter } from '@angular/core';
+import { Component } from '@angular/core';
 import { HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
 
 @Component({
@@ -8,9 +8,21 @@ import { HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
 })
 export class AppComponent {
   dictStocks = {
-    "ITSA4": 0,
-    "TAEE11": 0,
-    "PETR4": 0
+    "ITSA4": {
+      startValue: 20.0,
+      currentValue: 20.0,
+      change: 0.0
+    },
+    "TAEE11": {
+      startValue: 20.0,
+      currentValue: 20.0,
+      change: 0.0
+    },
+    "PETR4": {
+      startValue: 20.0,
+      currentValue: 20.0,
+      change: 0.0
+    }
   };
 
   private _hubConnection: HubConnection;
@@ -35,8 +47,6 @@ export class AppComponent {
     this._hubConnection  
       .start()  
       .then(() => {   
-        console.log('Hub connection started');  
-        
         for (let key in this.dictStocks) {
           this.connectToStock(key);
         }
@@ -48,7 +58,9 @@ export class AppComponent {
   
   private registerOnServerEvents(): void {  
     this._hubConnection.on('UpdatePrice', (data: any) => {
-      this.dictStocks[data.symbol] = data.price;
+      let item = this.dictStocks[data.symbol];
+      item.currentValue = data.price;
+      item.change = (item.currentValue - item.startValue)/item.startValue;
     });  
   }  
 }
