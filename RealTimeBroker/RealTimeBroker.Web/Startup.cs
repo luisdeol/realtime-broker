@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using RealTimeBroker.Web.HostedServices;
 using RealTimeBroker.Web.Hubs;
 
@@ -30,7 +31,7 @@ namespace RealTimeBroker.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -39,9 +40,10 @@ namespace RealTimeBroker.Web
 
             app.UseCors("CorsPolicyForDashboard");
 
-            app.UseSignalR(route =>
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
             {
-                route.MapHub<BrokerHub>("/brokerhub");
+                endpoints.MapHub<BrokerHub>("/brokerhub");
             });
         }
     }
